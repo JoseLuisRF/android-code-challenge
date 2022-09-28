@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Employeepedia</string>
+    <string name="employees_fragment_label">Employee List</string>
+    <string name="employees_details_fragment_label">Employee Details</string>
+
+    <string name="years_postfix">%1$d years</string>
+</resources>

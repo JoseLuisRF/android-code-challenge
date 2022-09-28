@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/employeesFragment">
+
+    <fragment
+        android:id="@+id/employeesFragment"
+        android:name="com.jlrf.mobile.employeepedia.presentation.EmployeesFragment"
+        android:label="@string/employees_fragment_label">
+
+        <action
+            android:id="@+id/action_employeesFragment_to_employeeDetailsFragment"
+            app:destination="@id/employeeDetailsFragment"
+            app:enterAnim="@anim/fragment_slide_in_left"
+            app:popExitAnim="@anim/fragment_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/employeeDetailsFragment"
+        android:name="com.jlrf.mobile.employeepedia.presentation.EmployeeDetailsFragment"
+        android:label="@string/employees_details_fragment_label" >
+        <argument
+            android:name="employeeId"
+            app:argType="long" />
+
+    </fragment>
+
+</navigation>
