@@ -3,7 +3,7 @@
 
 **Video**
 
-![Android App Video](docs/android-demo.gif "Android App - Code Challenge")
+![Android App Video](docs/android-codechallenge.gif "Android App - Code Challenge")
 
 
 **Libraries:**
