@@ -50,22 +50,6 @@ class EmployeesListViewModel @Inject constructor(
         }
     }
 
-    fun getEmployeeDetails(employeeId: Long) {
-        viewModelScope.launch(dispatcher.main()) {
-            getEmployeeDetailsUseCase.run(
-                GetEmployeeDetailsUseCase.Params(
-                    id = employeeId
-                )
-            ).fold(
-                { error -> handleEmployeesError(error) },
-                ::handleEmployeeDetailsSuccess
-            )
-        }
-    }
-
-    private fun handleEmployeeDetailsSuccess(employeeDetails: EmployeeModel) {
-
-    }
     private fun handleEmployeesSuccess(employeesList: List<EmployeeModel>) {
         dispatch(Action.EmployeesLoaded(employees = employeesList))
     }
