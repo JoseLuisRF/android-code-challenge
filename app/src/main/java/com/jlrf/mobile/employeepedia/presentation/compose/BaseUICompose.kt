@@ -15,28 +15,29 @@ import androidx.compose.ui.unit.dp
 import com.jlrf.mobile.employeepedia.R
 
 @Composable
-fun ProgressLoaderView() {
+fun ProgressLoaderView(
+    modifier: Modifier = Modifier
+        .fillMaxSize()
+        .background(colorResource(id = R.color.white))
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.white)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
     ) {
         CircularProgressIndicator(
             modifier = Modifier
                 .size(40.dp, 40.dp)
-
         )
     }
 }
 
 @Composable
-fun GenericErrorMessageView() {
+fun GenericErrorMessageView(
+    modifier: Modifier = Modifier
+        .fillMaxSize()
+        .background(colorResource(id = R.color.white)),
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.white)),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:${AndroidX.Versions.composeVersion}")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.16.0")
-//    implementation("androidx.navigation:navigation-compose:2.5.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
 
     // AndroidX - Navigation

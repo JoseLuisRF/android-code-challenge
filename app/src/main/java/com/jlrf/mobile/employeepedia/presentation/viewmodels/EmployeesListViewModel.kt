@@ -1,9 +1,8 @@
 package com.jlrf.mobile.employeepedia.presentation.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import arrow.core.None
-import com.jlrf.mobile.employeepedia.domain.GetEmployeeDetailsUseCase
 import com.jlrf.mobile.employeepedia.domain.GetEmployeesUseCase
+import com.jlrf.mobile.employeepedia.domain.base.EmployeeFilterType
 import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
 import com.jlrf.mobile.employeepedia.presentation.base.BaseAction
 import com.jlrf.mobile.employeepedia.presentation.base.BaseState
@@ -16,8 +15,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class EmployeesListViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
-    private val getEmployeesUseCase: GetEmployeesUseCase,
-    private val getEmployeeDetailsUseCase: GetEmployeeDetailsUseCase
+    private val getEmployeesUseCase: GetEmployeesUseCase
 ) : BaseViewModel<EmployeesListViewModel.State, EmployeesListViewModel.Action>(State(), dispatcher) {
 
     init {
@@ -28,7 +26,8 @@ class EmployeesListViewModel @Inject constructor(
         return when (action) {
             is Action.EmployeesLoaded -> oldState.copy(
                 isLoading = false,
-                employees = action.employees
+                employees = action.employees,
+                error = null
             )
             is Action.ErrorOccurred -> oldState.copy(
                 isLoading = false,
@@ -36,14 +35,21 @@ class EmployeesListViewModel @Inject constructor(
             )
             is Action.EmployeeDetailsLoaded -> oldState.copy(
                 isLoading = false,
-                employees = emptyList()
+                employees = emptyList(),
+                error = null
+            )
+            is Action.Loading -> oldState.copy(
+                isLoading = true,
+                employees = emptyList(),
+                error = null
             )
         }
     }
 
-    private fun loadEmployees() {
+    fun loadEmployees(employeeFilterType: EmployeeFilterType = EmployeeFilterType.None) {
+        dispatch(Action.Loading)
         viewModelScope.launch(dispatcher.main()) {
-            getEmployeesUseCase.run(None).fold(
+            getEmployeesUseCase.run(GetEmployeesUseCase.Params(filter = employeeFilterType)).fold(
                 { error -> handleEmployeesError(error) },
                 ::handleEmployeesSuccess
             )
@@ -65,6 +71,7 @@ class EmployeesListViewModel @Inject constructor(
     ) : BaseState
 
     sealed class Action : BaseAction {
+        object Loading : Action()
         data class EmployeesLoaded(val employees: List<EmployeeModel>) : Action()
         data class EmployeeDetailsLoaded(val employeeDetails: EmployeeModel) : Action()
         data class ErrorOccurred(val error: Error) : Action()
