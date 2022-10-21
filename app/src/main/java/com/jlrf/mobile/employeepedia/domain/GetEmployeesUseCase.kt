@@ -16,11 +16,7 @@ class GetEmployeesUseCase @Inject constructor(
     override suspend fun run(params: Params): Either<Error, List<EmployeeModel>> = try {
         val response = repository.getEmployees()
         response.takeIf { it.isNotEmpty() }?.let {
-            when(params.filter) {
-                EmployeeFilterType.None -> Either.Right(response)
-                EmployeeFilterType.Salary -> Either.Right(response.filter { it.salary >= 700000 })
-                EmployeeFilterType.Age -> Either.Right(response.filter { it.age >= 66 })
-            }
+            Either.Right(response)
         } ?: run {
             Either.Left(EmployeeError.NoEmployeesAvailable)
         }
