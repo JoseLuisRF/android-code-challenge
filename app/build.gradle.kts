@@ -69,6 +69,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.16.0")
 
+    //maven local
+    implementation("com.jlrf.tec:android-tec-lib:0.0.6-beta")
     // AndroidX - Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.2")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.2")

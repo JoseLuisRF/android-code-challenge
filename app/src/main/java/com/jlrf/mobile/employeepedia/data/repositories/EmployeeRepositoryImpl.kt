@@ -4,6 +4,7 @@ import com.jlrf.mobile.employeepedia.data.mappers.EmployeeMapper
 import com.jlrf.mobile.employeepedia.data.remote.EmployeeApi
 import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
 import com.jlrf.mobile.employeepedia.domain.repositories.EmployeeRepository
+import com.jlrf.tec.TecEmployeeRepositoryImpl
 import javax.inject.Inject
 
 class EmployeeRepositoryImpl @Inject constructor(
@@ -12,10 +13,15 @@ class EmployeeRepositoryImpl @Inject constructor(
 ) : EmployeeRepository {
 
     override suspend fun getEmployees(): List<EmployeeModel> {
-        return api.getEmployees()?.mapNotNull {
-            mapper.mapTo(it)
-        } ?: run {
-            emptyList()
+        val localRepo = TecEmployeeRepositoryImpl()
+        return localRepo.getEmployeesReadOnly().map {
+            EmployeeModel(
+                id = it.id,
+                name = it.name,
+                salary = it.salary,
+                age = it.age,
+                profileImage = it.profileImage
+            )
         }
     }
 
