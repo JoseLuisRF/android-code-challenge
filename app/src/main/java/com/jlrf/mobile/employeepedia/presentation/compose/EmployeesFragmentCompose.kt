@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -122,13 +123,11 @@ fun EmployeesListView(
                     .fillMaxSize()
                     .background(colorResource(id = R.color.white))
             ) {
-                items(state.employees.size) {
-                    state.employees.forEach {
-                        EmployeeItem(
-                            model = it,
-                            onClick = onItemClick
-                        )
-                    }
+                items(state.employees) {
+                    EmployeeItem(
+                        model = it,
+                        onClick = onItemClick
+                    )
                 }
             }
         }

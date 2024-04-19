@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace = "com.jlrf.mobile.employeepedia"
     compileSdk = Versions.compileSdkVersion
 
     defaultConfig {
@@ -26,11 +27,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "18"
     }
 
     buildFeatures {
@@ -39,7 +40,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.1"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 }
 
@@ -67,8 +68,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:${AndroidX.Versions.composeVersion}")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.16.0")
-//    implementation("androidx.navigation:navigation-compose:2.5.2")
-
 
     // AndroidX - Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.2")

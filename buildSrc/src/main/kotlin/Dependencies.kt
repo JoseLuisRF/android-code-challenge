@@ -1,7 +1,7 @@
 object Versions {
-    const val targetSdkVersion = 32
-    const val compileSdkVersion = 32
-    const val minSdkVersion = 26
+    const val targetSdkVersion = 34
+    const val compileSdkVersion = 34
+    const val minSdkVersion = 28
     const val versionCode = 1
 }
 
@@ -16,6 +16,6 @@ object AndroidX {
 
 object GoogleLib {
     object Versions {
-        val hiltVersion = "2.44"
+        val hiltVersion = "2.48"
     }
 }

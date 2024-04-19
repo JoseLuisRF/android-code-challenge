@@ -1,6 +1,5 @@
 package com.jlrf.mobile.employeepedia.presentation.viewmodels
 
-import androidx.lifecycle.viewModelScope
 import arrow.core.None
 import com.jlrf.mobile.employeepedia.domain.GetEmployeeDetailsUseCase
 import com.jlrf.mobile.employeepedia.domain.GetEmployeesUseCase
@@ -11,7 +10,6 @@ import com.jlrf.mobile.employeepedia.presentation.base.BaseViewModel
 import com.jlrf.mobile.employeepedia.util.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EmployeesListViewModel @Inject constructor(
@@ -19,10 +17,6 @@ class EmployeesListViewModel @Inject constructor(
     private val getEmployeesUseCase: GetEmployeesUseCase,
     private val getEmployeeDetailsUseCase: GetEmployeeDetailsUseCase
 ) : BaseViewModel<EmployeesListViewModel.State, EmployeesListViewModel.Action>(State(), dispatcher) {
-
-    init {
-        loadEmployees()
-    }
 
     override fun reduce(oldState: State, action: Action): State {
         return when (action) {
@@ -41,13 +35,11 @@ class EmployeesListViewModel @Inject constructor(
         }
     }
 
-    private fun loadEmployees() {
-        viewModelScope.launch(dispatcher.main()) {
-            getEmployeesUseCase.run(None).fold(
-                { error -> handleEmployeesError(error) },
-                ::handleEmployeesSuccess
-            )
-        }
+    public suspend fun loadEmployees() {
+        getEmployeesUseCase.run(None).fold(
+            { error -> handleEmployeesError(error) },
+            ::handleEmployeesSuccess
+        )
     }
 
     private fun handleEmployeesSuccess(employeesList: List<EmployeeModel>) {
