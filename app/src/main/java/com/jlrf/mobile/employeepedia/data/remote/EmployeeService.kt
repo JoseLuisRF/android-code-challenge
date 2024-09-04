@@ -11,10 +11,7 @@ interface EmployeeService {
     @GET("/api/v1/employees")
     suspend fun getEmployees(): Response<GetEmployeesResponse>
 
-    @GET("/api/v1/employee/{$employeeId}")
-    suspend fun getEmployee(@Path(Companion.employeeId) employeeId: Long): Response<GetEmployeeDetailsResponse>
+    @GET("/api/v1/employee/{employeeId}")
+    suspend fun getEmployee(@Path("employeeId") employeeId: Long): Response<GetEmployeeDetailsResponse>
 
-    companion object {
-        const val employeeId = "employeeId"
-    }
 }

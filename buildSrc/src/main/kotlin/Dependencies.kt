@@ -1,3 +1,4 @@
+@Suppress("ktlint:standard:property-naming")
 object Versions {
     const val targetSdkVersion = 34
     const val compileSdkVersion = 34
@@ -5,6 +6,7 @@ object Versions {
     const val versionCode = 1
 }
 
+@Suppress("ktlint:standard:property-naming")
 object AndroidX {
     object Versions {
         const val coreKtx = "1.7.0"
@@ -14,6 +16,7 @@ object AndroidX {
     }
 }
 
+@Suppress("ktlint:standard:property-naming")
 object GoogleLib {
     object Versions {
         val hiltVersion = "2.48"
