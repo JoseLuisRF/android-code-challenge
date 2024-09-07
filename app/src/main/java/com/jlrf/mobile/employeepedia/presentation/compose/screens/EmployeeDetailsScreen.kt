@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,8 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import coil.compose.rememberAsyncImagePainter
 import com.jlrf.mobile.employeepedia.R
-import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
+import com.jlrf.mobile.employeepedia.domain.models.MovieModel
 import com.jlrf.mobile.employeepedia.presentation.compose.views.GenericErrorMessageView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.ProgressLoaderView
 import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeeDetailsViewModel
@@ -52,12 +52,16 @@ import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeeDetailsView
 @Composable
 fun PortraitEmployeeDetailsScreenPreview() {
     val uiState = EmployeeDetailsViewModel.State(
-        employee = EmployeeModel(
+        movie = MovieModel(
+            genreIds = emptyList(),
             id = 1,
-            name = "Luis Ramos",
-            salary = 150000.00,
-            age = 29,
-            profileImage = ""
+            originalLanguage = "en",
+            originalTitle = "Original Title",
+            overview = "Overview",
+            popularity = 1.0,
+            posterPath = "posterPath",
+            releaseDate = "releaseDate",
+            title = "Title",
         ),
         isLoading = false,
         error = null
@@ -70,9 +74,9 @@ fun PortraitEmployeeDetailsScreenPreview() {
  **************************************************************************************************/
 
 @Composable
-fun EmployeeDetailsScreen(
+fun MovieDetailsScreen(
     windowSize: WindowSizeClass,
-    employeeId: Long,
+    model: MovieModel,
     onBackPressed: () -> Unit,
 ) {
     val viewModel = hiltViewModel<EmployeeDetailsViewModel>()
@@ -83,7 +87,7 @@ fun EmployeeDetailsScreen(
         val observer = LifecycleEventObserver { owner, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    viewModel.selectEmployee(employeeId)
+                    viewModel.loadMovieReviews(model)
                 }
 
                 else -> {}
@@ -184,21 +188,21 @@ fun EmployeeDetailsContent(
         }
 
         else -> {
-            val model = uiState.employee
+            val model = uiState.movie
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_user),
-                    contentDescription = model?.name.orEmpty(),
+                    painter = rememberAsyncImagePainter(model?.posterPath),
+                    contentDescription = model?.title.orEmpty(),
                     modifier = Modifier.size(50.dp, 50.dp),
                     contentScale = ContentScale.Fit,
                     alignment = Alignment.Center
                 )
                 Text(
-                    text = model?.name.orEmpty(),
+                    text = model?.title.orEmpty(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colorResource(id = R.color.black),
@@ -207,7 +211,7 @@ fun EmployeeDetailsContent(
                         .padding(top = 10.dp)
                 )
                 Text(
-                    text = "${model?.age} years",
+                    text = "${model?.popularity} popularity",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colorResource(id = R.color.black),

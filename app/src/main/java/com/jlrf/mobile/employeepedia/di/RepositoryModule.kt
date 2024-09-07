@@ -1,7 +1,7 @@
 package com.jlrf.mobile.employeepedia.di
 
-import com.jlrf.mobile.employeepedia.data.repositories.EmployeeRepositoryImpl
-import com.jlrf.mobile.employeepedia.domain.repositories.EmployeeRepository
+import com.jlrf.mobile.employeepedia.data.repositories.MoviesRepositoryImpl
+import com.jlrf.mobile.employeepedia.domain.repositories.MoviesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,5 +17,5 @@ import dagger.hilt.android.components.ViewModelComponent
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun providesEmployeeRepository(repositoryImpl: EmployeeRepositoryImpl): EmployeeRepository
+    abstract fun providesEmployeeRepository(repositoryImpl: MoviesRepositoryImpl): MoviesRepository
 }

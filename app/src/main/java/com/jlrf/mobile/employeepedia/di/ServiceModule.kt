@@ -1,6 +1,6 @@
 package com.jlrf.mobile.employeepedia.di
 
-import com.jlrf.mobile.employeepedia.data.remote.EmployeeService
+import com.jlrf.mobile.employeepedia.data.remote.MovieService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import retrofit2.Retrofit
 class ServiceModule {
 
     @Provides
-    fun providesEmployeeService(retrofit: Retrofit): EmployeeService =
-        retrofit.create(EmployeeService::class.java)
+    fun providesEmployeeService(retrofit: Retrofit): MovieService =
+        retrofit.create(MovieService::class.java)
 }

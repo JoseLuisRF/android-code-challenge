@@ -3,11 +3,11 @@ package com.jlrf.mobile.employeepedia.domain
 import arrow.core.Either
 import com.jlrf.mobile.employeepedia.domain.base.UseCase
 import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
-import com.jlrf.mobile.employeepedia.domain.repositories.EmployeeRepository
+import com.jlrf.mobile.employeepedia.domain.repositories.MoviesRepository
 import javax.inject.Inject
 
 class GetEmployeeDetailsUseCase @Inject constructor(
-    private val repository: EmployeeRepository
+    private val repository: MoviesRepository
 ) : UseCase<EmployeeModel, GetEmployeeDetailsUseCase.Params>() {
 
     override suspend fun run(params: Params): Either<Error, EmployeeModel> {
@@ -22,6 +22,6 @@ class GetEmployeeDetailsUseCase @Inject constructor(
     data class Params(val id: Long)
 
     sealed class EmployeeDetailsError : Error() {
-        object EmployeeNotFoundError : GetEmployeesUseCase.EmployeeError()
+        object EmployeeNotFoundError : GetPopularMoviesUseCase.EmployeeError()
     }
 }

@@ -96,10 +96,16 @@ object Deps {
         const val hiltWorker = "1.0.0"
         const val protobufVersion = "3.19.3"
         const val gson = "2.10.1"
+        const val coilVersion = "2.6.0"
+        const val arrow = "1.0.1"
     }
 
+    const val arrow = "io.arrow-kt:arrow-core:${Versions.arrow}"
+    const val coil = "io.coil-kt:coil-compose:${Versions.coilVersion}"
+    const val coilGif = "io.coil-kt:coil-gif:${Versions.coilVersion}"
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val retrofitGsonConverter = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
+
     //OKHttp
     const val okhttp3LoggingInterceptor =
         "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp3}"

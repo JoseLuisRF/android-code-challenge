@@ -1,31 +1,41 @@
 package com.jlrf.mobile.employeepedia.presentation.viewmodels
 
-import arrow.core.None
-import com.jlrf.mobile.employeepedia.domain.GetEmployeesUseCase
-import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.jlrf.mobile.employeepedia.domain.GetPopularMoviesUseCase
+import com.jlrf.mobile.employeepedia.domain.models.MovieModel
 import com.jlrf.mobile.employeepedia.presentation.base.BaseAction
 import com.jlrf.mobile.employeepedia.presentation.base.BaseState
 import com.jlrf.mobile.employeepedia.presentation.base.BaseViewModel
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeeDetailsViewModel.Action
 import com.jlrf.mobile.employeepedia.util.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EmployeesListViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
-    private val getEmployeesUseCase: GetEmployeesUseCase,
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
 ) : BaseViewModel<EmployeesListViewModel.State, EmployeesListViewModel.Action>(
     State(),
     dispatcher
 ) {
 
+    private val _pagingData = MutableStateFlow<PagingData<MovieModel>>(PagingData.empty())
+    val pagingData: StateFlow<PagingData<MovieModel>> = _pagingData.asStateFlow()
+
     override fun reduce(oldState: State, action: Action): State {
         return when (action) {
-            is Action.EmployeesLoaded -> oldState.copy(
+            is Action.MoviesLoaded -> oldState.copy(
                 isLoading = false,
-                employees = action.employees,
-                selectedEmployee = null
+                selectedMovie = null,
+                pagingData = action.pagingData
             )
 
             is Action.ErrorOccurred -> oldState.copy(
@@ -37,21 +47,21 @@ class EmployeesListViewModel @Inject constructor(
                 isLoading = action.value
             )
 
-            is Action.SelectEmployee -> oldState.copy(
-                selectedEmployee = action.employee
+            is Action.SelectMovie -> oldState.copy(
+                selectedMovie = action.model
             )
         }
     }
 
-    public fun selectEmployee(employeeId: Long) {
-        currentState.employees.firstOrNull { it.id == employeeId }?.let {
-            dispatch(Action.SelectEmployee(it))
-        }
+    public fun selectMovie(movieModel: MovieModel) {
+        dispatch(Action.SelectMovie(movieModel))
     }
 
     public suspend fun loadEmployees() {
         isLoading(true)
-        getEmployeesUseCase.run(None).fold(
+        getPopularMoviesUseCase.run(
+            params = GetPopularMoviesUseCase.Params()
+        ).fold(
             { error -> handleEmployeesError(error) },
             ::handleEmployeesSuccess
         )
@@ -61,8 +71,16 @@ class EmployeesListViewModel @Inject constructor(
         dispatch(Action.Loading(value))
     }
 
-    private fun handleEmployeesSuccess(employeesList: List<EmployeeModel>) {
-        dispatch(Action.EmployeesLoaded(employees = employeesList))
+    private fun handleEmployeesSuccess(employeesList: Flow<PagingData<MovieModel>>) {
+        viewModelScope.launch(Dispatchers.Default) {
+            employeesList.cachedIn(viewModelScope).collect {
+                // Update PagingData
+                _pagingData.value = it
+
+                // Update Screen State
+                dispatch(Action.MoviesLoaded(it))
+            }
+        }
     }
 
     private fun handleEmployeesError(error: Error) {
@@ -70,16 +88,18 @@ class EmployeesListViewModel @Inject constructor(
     }
 
     data class State(
-        val employees: List<EmployeeModel> = emptyList(),
         val isLoading: Boolean = true,
         val error: Error? = null,
-        val selectedEmployee: EmployeeModel? = null,
+        val selectedMovie: MovieModel? = null,
+        val pagingData: PagingData<MovieModel> = PagingData.empty()
     ) : BaseState
 
     sealed class Action : BaseAction {
-        data class EmployeesLoaded(val employees: List<EmployeeModel>) : Action()
+        data class MoviesLoaded(val pagingData: PagingData<MovieModel>) :
+            Action()
+
         data class ErrorOccurred(val error: Error) : Action()
         data class Loading(val value: Boolean) : Action()
-        data class SelectEmployee(val employee: EmployeeModel) : Action()
+        data class SelectMovie(val model: MovieModel) : Action()
     }
 }
