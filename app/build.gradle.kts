@@ -1,11 +1,24 @@
 import Deps.hiltModule
 import Deps.junit5
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+}
+
+val tmdbToken = getLocalProperty(key = "tmdb.authorization_token") ?: System.getenv("TMDB_TOKEN")
+
+fun Project.getLocalProperty(key: String, file: String = "local.properties"): Any? {
+    val localProperties = Properties()
+    try {
+        localProperties.load(project.rootProject.file("local.properties").inputStream())
+        return localProperties.getProperty("tmdb.authorization_token")
+    } catch (ex: Exception) {
+        return null
+    }
 }
 
 android {
@@ -20,11 +33,16 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TMDB_TOKEN", "\"$tmdbToken\"")
     }
 
     buildTypes {
         getByName("release") {
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             proguardFile("proguard-rules.pro")
         }
     }
@@ -57,6 +75,9 @@ dependencies {
     implementation(AndroidX.ktxViewModel)
     implementation(AndroidX.worker)
 
+    implementation(AndroidX.paging)
+    implementation(AndroidX.pagingRuntime)
+
     // Android Compose
     implementation(platform(Compose.composeBom))
     implementation(Compose.activityCompose)
@@ -67,8 +88,8 @@ dependencies {
     implementation(Compose.toolingPreview)
     implementation(Compose.material3)
     implementation(Compose.material3WindowSize)
-
-//    implementation("com.google.accompanist:accompanist-drawablepainter:0.16.0")
+    implementation(Deps.coil)
+    implementation(Deps.coilGif)
 
     // DI
     hiltModule()
@@ -78,7 +99,7 @@ dependencies {
     implementation(Deps.retrofitGsonConverter)
     implementation(Deps.okhttp3LoggingInterceptor)
     implementation(Deps.coroutinesCore)
-    implementation("io.arrow-kt:arrow-core:1.0.1")
+    implementation(Deps.arrow)
     implementation(Deps.gson)
 
     // Testing

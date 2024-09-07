@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,19 +15,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
+import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import com.jlrf.mobile.employeepedia.R
-import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
-import com.jlrf.mobile.employeepedia.presentation.compose.views.EmployeeItemView
+import com.jlrf.mobile.employeepedia.domain.models.MovieModel
 import com.jlrf.mobile.employeepedia.presentation.compose.views.GenericErrorMessageView
+import com.jlrf.mobile.employeepedia.presentation.compose.views.LoadingListItemView
+import com.jlrf.mobile.employeepedia.presentation.compose.views.MovieItemView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.ProgressLoaderView
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewModel
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MoviesViewModel
 
 /***************************************************************************************************
  *  Composable Previews
@@ -36,38 +37,16 @@ import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewMo
 @Preview
 @Composable
 fun SuccessStatePreview() {
-    val state = EmployeesListViewModel.State(
-        employees = listOf(
-            EmployeeModel(
-                id = 1,
-                name = "Luis Ramos",
-                salary = 150000.00,
-                age = 29,
-                profileImage = ""
-            ),
-            EmployeeModel(
-                id = 3,
-                name = "Jose Fernandez",
-                salary = 150000.00,
-                age = 29,
-                profileImage = ""
-            )
-        ),
+    val state = MoviesViewModel.State(
         isLoading = false,
         error = null
-    )
-
-    PortraitHomeScreen(
-        uiState = state,
-        onItemClick = {}
     )
 }
 
 @Preview
 @Composable
 fun LoadingStatePreview() {
-    val state = EmployeesListViewModel.State(
-        employees = emptyList(),
+    val state = MoviesViewModel.State(
         isLoading = true,
         error = null
     )
@@ -77,8 +56,7 @@ fun LoadingStatePreview() {
 @Preview
 @Composable
 fun ErrorStatePreview() {
-    val state = EmployeesListViewModel.State(
-        employees = emptyList(),
+    val state = MoviesViewModel.State(
         isLoading = false,
         error = Error()
     )
@@ -92,14 +70,16 @@ fun ErrorStatePreview() {
 @Composable
 fun HomeScreen(
     windowSize: WindowSizeClass,
-    uiState: EmployeesListViewModel.State,
-    onItemClick: (Long) -> Unit = {}
+    uiState: MoviesViewModel.State,
+    pagingData: LazyPagingItems<MovieModel>,
+    onItemClick: (MovieModel) -> Unit = {}
 ) {
     when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             PortraitHomeScreen(
                 uiState = uiState,
                 onItemClick = onItemClick,
+                pagingData = pagingData,
             )
         }
 
@@ -111,13 +91,17 @@ fun HomeScreen(
 
 @Composable
 fun PortraitHomeScreen(
-    uiState: EmployeesListViewModel.State,
-    onItemClick: (Long) -> Unit
+    uiState: MoviesViewModel.State,
+    pagingData: LazyPagingItems<MovieModel>,
+    onItemClick: (MovieModel) -> Unit
 ) {
+
     HomeScreenContainer() { paddingValues ->
         HomeScreenContent(
             modifier = Modifier.padding(paddingValues),
-            uiState = uiState, onItemClick = onItemClick
+            uiState = uiState,
+            pagingData = pagingData,
+            onItemClick = onItemClick
         )
     }
 }
@@ -154,8 +138,9 @@ fun HomeScreenContainer(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier,
-    uiState: EmployeesListViewModel.State,
-    onItemClick: (Long) -> Unit
+    uiState: MoviesViewModel.State,
+    pagingData: LazyPagingItems<MovieModel>,
+    onItemClick: (MovieModel) -> Unit
 ) {
 
     when {
@@ -168,16 +153,40 @@ fun HomeScreenContent(
         }
 
         else -> {
-            LazyColumn(
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(16.dp),
                 modifier = modifier
                     .fillMaxSize()
                     .background(colorResource(id = R.color.white))
             ) {
-                items(uiState.employees) {
-                    EmployeeItemView(
-                        model = it,
-                        onClick = onItemClick
-                    )
+                items(pagingData.itemCount) { index ->
+                    pagingData[index]?.let { model ->
+                        MovieItemView(
+                            model = model,
+                            onClick = onItemClick
+                        )
+                    }
+                }
+            }
+
+            pagingData.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> { // Initial load
+                        LoadingListItemView()
+                    }
+
+                    loadState.append is LoadState.Loading -> { // Load more
+                        LoadingListItemView()
+                    }
+
+                    loadState.refresh is LoadState.Error -> { // Error on initial load
+                        // Retry button
+                    }
+
+                    loadState.append is LoadState.Error -> { // Error on load more
+                        // Show Retry
+                    }
                 }
             }
         }

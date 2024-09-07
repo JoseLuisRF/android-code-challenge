@@ -1,4 +1,4 @@
-package com.jlrf.mobile.employeepedia.util
+package com.jlrf.mobile.employeepedia.util.extensions
 
 import com.jlrf.mobile.employeepedia.domain.base.CommonError
 import kotlinx.coroutines.CancellationException

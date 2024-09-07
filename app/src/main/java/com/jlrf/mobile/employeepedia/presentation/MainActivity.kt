@@ -21,18 +21,19 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.jlrf.mobile.employeepedia.presentation.compose.CustomTheme
 import com.jlrf.mobile.employeepedia.presentation.compose.navigation.CustomAppNavigation
-import com.jlrf.mobile.employeepedia.presentation.compose.screens.EmployeeDetailsScreen
 import com.jlrf.mobile.employeepedia.presentation.compose.screens.HomeScreen
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewModel
+import com.jlrf.mobile.employeepedia.presentation.compose.screens.MovieDetailsScreen
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MoviesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<EmployeesListViewModel>()
+    private val viewModel by viewModels<MoviesViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val windowSizeClass = calculateWindowSizeClass(this)
             val uiState by viewModel.state.collectAsState()
+            val pagingData = viewModel.pagingData.collectAsLazyPagingItems()
             CustomTheme {
                 Box(
                     modifier = Modifier
@@ -66,17 +68,18 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 windowSize = windowSizeClass,
                                 uiState = uiState,
+                                pagingData = pagingData,
                                 onItemClick = {
-                                    viewModel.selectEmployee(it)
-                                    navController.navigate(CustomAppNavigation.EmployeeDetailsScreen.route)
+                                    viewModel.selectMovie(it)
+                                    navController.navigate(CustomAppNavigation.MovieDetailsScreen.route)
                                 }
                             )
                         }
 
-                        composable(CustomAppNavigation.EmployeeDetailsScreen.route) {
-                            EmployeeDetailsScreen(
+                        composable(CustomAppNavigation.MovieDetailsScreen.route) {
+                            MovieDetailsScreen(
                                 windowSize = windowSizeClass,
-                                employeeId = uiState.selectedEmployee!!.id,
+                                mainUiState = uiState,
                                 onBackPressed = {
                                     navController.popBackStack()
                                 }
