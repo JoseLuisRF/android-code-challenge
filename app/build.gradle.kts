@@ -9,10 +9,17 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
-val localProperties = Properties()
-localProperties.load(project.rootProject.file("local.properties").inputStream())
+val tmdbToken = getLocalProperty(key = "tmdb.authorization_token") ?: System.getenv("TMDB_TOKEN")
 
-val tmdbToken = localProperties.getProperty("tmdb.authorization_token")
+fun Project.getLocalProperty(key: String, file: String = "local.properties"): Any? {
+    val localProperties = Properties()
+    try {
+        localProperties.load(project.rootProject.file("local.properties").inputStream())
+        return localProperties.getProperty("tmdb.authorization_token")
+    } catch (ex: Exception) {
+        return null
+    }
+}
 
 android {
     namespace = "com.jlrf.mobile.employeepedia"
@@ -32,7 +39,10 @@ android {
 
     buildTypes {
         getByName("release") {
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             proguardFile("proguard-rules.pro")
         }
     }
