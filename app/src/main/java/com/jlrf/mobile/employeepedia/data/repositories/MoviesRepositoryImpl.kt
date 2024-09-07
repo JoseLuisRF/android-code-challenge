@@ -5,9 +5,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.jlrf.mobile.employeepedia.data.mappers.MovieDataMapper
 import com.jlrf.mobile.employeepedia.data.remote.MoviesCloudSource
-import com.jlrf.mobile.employeepedia.domain.MoviesPagingSource
-import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.domain.models.MovieReviewModel
+import com.jlrf.mobile.employeepedia.domain.paging.MovieReviewsPagingSource
+import com.jlrf.mobile.employeepedia.domain.paging.MoviesPagingSource
 import com.jlrf.mobile.employeepedia.domain.repositories.MoviesRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +33,19 @@ class MoviesRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getEmployeeDetails(id: Long): EmployeeModel? {
-        return null
+    override suspend fun getMovieReviews(
+        movieId: Int,
+        page: Int,
+        pageSize: Int
+    ): Flow<PagingData<MovieReviewModel>> {
+        return Pager(
+            config = PagingConfig(pageSize = pageSize),
+            pagingSourceFactory = {
+                MovieReviewsPagingSource(
+                    cloudSource = cloudDataSource,
+                    movieId = movieId,
+                )
+            }
+        ).flow
     }
 }

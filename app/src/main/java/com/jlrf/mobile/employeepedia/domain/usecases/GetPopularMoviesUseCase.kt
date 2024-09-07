@@ -1,11 +1,11 @@
-package com.jlrf.mobile.employeepedia.domain
+package com.jlrf.mobile.employeepedia.domain.usecases
 
 import androidx.paging.PagingData
 import arrow.core.Either
 import com.jlrf.mobile.employeepedia.domain.base.UseCase
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
 import com.jlrf.mobile.employeepedia.domain.repositories.MoviesRepository
-import com.jlrf.mobile.employeepedia.util.toError
+import com.jlrf.mobile.employeepedia.util.extensions.toError
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -25,9 +25,5 @@ class GetPopularMoviesUseCase @Inject constructor(
         }
     }
 
-    sealed class EmployeeError : Error() {
-        object NoMoviesAvailable : EmployeeError()
-    }
-
-    data class Params(val page: Int = 1, val pageSize: Int = 100)
+    data class Params(val page: Int = 1, val pageSize: Int = 20)
 }

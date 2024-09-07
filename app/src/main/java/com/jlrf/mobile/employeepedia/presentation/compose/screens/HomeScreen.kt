@@ -24,11 +24,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.jlrf.mobile.employeepedia.R
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
-import com.jlrf.mobile.employeepedia.presentation.compose.views.EmployeeItemView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.GenericErrorMessageView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.LoadingListItemView
+import com.jlrf.mobile.employeepedia.presentation.compose.views.MovieItemView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.ProgressLoaderView
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewModel
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MoviesViewModel
 
 /***************************************************************************************************
  *  Composable Previews
@@ -37,22 +37,16 @@ import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewMo
 @Preview
 @Composable
 fun SuccessStatePreview() {
-    val state = EmployeesListViewModel.State(
+    val state = MoviesViewModel.State(
         isLoading = false,
         error = null
     )
-
-//    PortraitHomeScreen(
-//        uiState = state,
-//        pagingData = LazyPagingItems,
-//        onItemClick = {}
-//    )
 }
 
 @Preview
 @Composable
 fun LoadingStatePreview() {
-    val state = EmployeesListViewModel.State(
+    val state = MoviesViewModel.State(
         isLoading = true,
         error = null
     )
@@ -62,7 +56,7 @@ fun LoadingStatePreview() {
 @Preview
 @Composable
 fun ErrorStatePreview() {
-    val state = EmployeesListViewModel.State(
+    val state = MoviesViewModel.State(
         isLoading = false,
         error = Error()
     )
@@ -76,7 +70,7 @@ fun ErrorStatePreview() {
 @Composable
 fun HomeScreen(
     windowSize: WindowSizeClass,
-    uiState: EmployeesListViewModel.State,
+    uiState: MoviesViewModel.State,
     pagingData: LazyPagingItems<MovieModel>,
     onItemClick: (MovieModel) -> Unit = {}
 ) {
@@ -97,7 +91,7 @@ fun HomeScreen(
 
 @Composable
 fun PortraitHomeScreen(
-    uiState: EmployeesListViewModel.State,
+    uiState: MoviesViewModel.State,
     pagingData: LazyPagingItems<MovieModel>,
     onItemClick: (MovieModel) -> Unit
 ) {
@@ -144,7 +138,7 @@ fun HomeScreenContainer(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier,
-    uiState: EmployeesListViewModel.State,
+    uiState: MoviesViewModel.State,
     pagingData: LazyPagingItems<MovieModel>,
     onItemClick: (MovieModel) -> Unit
 ) {
@@ -160,16 +154,16 @@ fun HomeScreenContent(
 
         else -> {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2), // Two columns
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(16.dp),
                 modifier = modifier
                     .fillMaxSize()
                     .background(colorResource(id = R.color.white))
             ) {
                 items(pagingData.itemCount) { index ->
-                    pagingData[index]?.let {
-                        EmployeeItemView(
-                            model = it,
+                    pagingData[index]?.let { model ->
+                        MovieItemView(
+                            model = model,
                             onClick = onItemClick
                         )
                     }

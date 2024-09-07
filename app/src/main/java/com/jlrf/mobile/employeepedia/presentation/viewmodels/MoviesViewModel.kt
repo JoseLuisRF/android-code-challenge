@@ -3,8 +3,8 @@ package com.jlrf.mobile.employeepedia.presentation.viewmodels
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.jlrf.mobile.employeepedia.domain.GetPopularMoviesUseCase
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.domain.usecases.GetPopularMoviesUseCase
 import com.jlrf.mobile.employeepedia.presentation.base.BaseAction
 import com.jlrf.mobile.employeepedia.presentation.base.BaseState
 import com.jlrf.mobile.employeepedia.presentation.base.BaseViewModel
@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class EmployeesListViewModel @Inject constructor(
+class MoviesViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
-) : BaseViewModel<EmployeesListViewModel.State, EmployeesListViewModel.Action>(
+) : BaseViewModel<MoviesViewModel.State, MoviesViewModel.Action>(
     State(),
     dispatcher
 ) {

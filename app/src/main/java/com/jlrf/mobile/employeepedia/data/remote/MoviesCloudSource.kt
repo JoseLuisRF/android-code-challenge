@@ -4,7 +4,7 @@ import android.util.Log
 import com.jlrf.mobile.employeepedia.data.mappers.MovieDataMapper
 import com.jlrf.mobile.employeepedia.data.remote.model.GetPopularMoviesRequest
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
-import com.jlrf.mobile.employeepedia.domain.models.MovieReview
+import com.jlrf.mobile.employeepedia.domain.models.MovieReviewModel
 import com.jlrf.mobile.employeepedia.util.DispatcherProvider
 import javax.inject.Inject
 import kotlinx.coroutines.withContext
@@ -36,12 +36,13 @@ class MoviesCloudSource @Inject constructor(
         }
     }
 
-    suspend fun getMovieReviews(movieId: Int): List<MovieReview>? {
+    suspend fun getMovieReviews(movieId: Int, page: Int): List<MovieReviewModel>? {
         return withContext(dispatcherProvider.io()) {
             try {
                 val movieReviewsResponse = service.getMovieReviews(
                     headers = serviceSettings.getAuthorizationHeader(),
-                    movieId = movieId
+                    movieId = movieId,
+                    page = page
                 )
                 movieReviewsResponse.takeIf { it.isSuccessful && movieReviewsResponse.body() != null }
                     ?.let {

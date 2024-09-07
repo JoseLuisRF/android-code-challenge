@@ -26,10 +26,11 @@ interface MovieService {
         @Path("movieId") movieId: Int
     ): Response<GetMovieDetailsResponse>
 
-    @GET("/3/movie/{movie_id}/reviews")
+    @GET("/3/movie/{movieId}/reviews")
     suspend fun getMovieReviews(
         @HeaderMap headers: Map<String, String>,
-        @Path("movieId") movieId: Int
+        @Path("movieId") movieId: Int,
+        @Query("page") page: Int,
     ): Response<GetMovieReviewsResponse>
 
 }

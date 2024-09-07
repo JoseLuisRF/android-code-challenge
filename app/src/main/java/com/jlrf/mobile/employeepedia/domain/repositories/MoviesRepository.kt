@@ -1,8 +1,8 @@
 package com.jlrf.mobile.employeepedia.domain.repositories
 
 import androidx.paging.PagingData
-import com.jlrf.mobile.employeepedia.domain.models.EmployeeModel
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.domain.models.MovieReviewModel
 import kotlinx.coroutines.flow.Flow
 
 interface MoviesRepository {
@@ -12,5 +12,9 @@ interface MoviesRepository {
         pageSize: Int
     ): Flow<PagingData<MovieModel>>
 
-    suspend fun getEmployeeDetails(id: Long): EmployeeModel?
+    suspend fun getMovieReviews(
+        movieId: Int,
+        page: Int,
+        pageSize: Int
+    ): Flow<PagingData<MovieReviewModel>>
 }

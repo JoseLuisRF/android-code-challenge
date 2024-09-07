@@ -1,13 +1,14 @@
 package com.jlrf.mobile.employeepedia.presentation.compose.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +26,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -38,20 +38,28 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.jlrf.mobile.employeepedia.R
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.domain.models.MovieReviewModel
 import com.jlrf.mobile.employeepedia.presentation.compose.views.GenericErrorMessageView
+import com.jlrf.mobile.employeepedia.presentation.compose.views.LoadingListItemView
+import com.jlrf.mobile.employeepedia.presentation.compose.views.MovieReviewItemView
 import com.jlrf.mobile.employeepedia.presentation.compose.views.ProgressLoaderView
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeeDetailsViewModel
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MovieDetailsViewModel
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MoviesViewModel
 
 /***************************************************************************************************
  *  Composable Previews
  **************************************************************************************************/
+
 @Preview
 @Composable
 fun PortraitEmployeeDetailsScreenPreview() {
-    val uiState = EmployeeDetailsViewModel.State(
+    val uiState = MovieDetailsViewModel.State(
         movie = MovieModel(
             genreIds = emptyList(),
             id = 1,
@@ -62,11 +70,11 @@ fun PortraitEmployeeDetailsScreenPreview() {
             posterPath = "posterPath",
             releaseDate = "releaseDate",
             title = "Title",
+            backdropPath = "backdropPath",
         ),
         isLoading = false,
         error = null
     )
-    PortraitEmployeeDetailsScreen(uiState = uiState)
 }
 
 /***************************************************************************************************
@@ -76,18 +84,21 @@ fun PortraitEmployeeDetailsScreenPreview() {
 @Composable
 fun MovieDetailsScreen(
     windowSize: WindowSizeClass,
-    model: MovieModel,
+    mainUiState: MoviesViewModel.State,
     onBackPressed: () -> Unit,
 ) {
-    val viewModel = hiltViewModel<EmployeeDetailsViewModel>()
+    val viewModel = hiltViewModel<MovieDetailsViewModel>()
     val lifecycleOwner = rememberUpdatedState(newValue = LocalLifecycleOwner.current)
+    val pagingData = viewModel.pagingData.collectAsLazyPagingItems()
 
     DisposableEffect(lifecycleOwner.value) {
         val lifecycle = lifecycleOwner.value.lifecycle
         val observer = LifecycleEventObserver { owner, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    viewModel.loadMovieReviews(model)
+                    mainUiState.selectedMovie?.let { model ->
+                        viewModel.loadMovieReviews(model)
+                    }
                 }
 
                 else -> {}
@@ -105,6 +116,7 @@ fun MovieDetailsScreen(
         WindowWidthSizeClass.Compact -> {
             PortraitEmployeeDetailsScreen(
                 uiState = uiState,
+                pagingData = pagingData,
                 onBackPressed = onBackPressed
             )
         }
@@ -117,7 +129,8 @@ fun MovieDetailsScreen(
 
 @Composable
 fun PortraitEmployeeDetailsScreen(
-    uiState: EmployeeDetailsViewModel.State,
+    uiState: MovieDetailsViewModel.State,
+    pagingData: LazyPagingItems<MovieReviewModel>,
     onBackPressed: () -> Unit = {},
 ) {
     EmployeeDetailsContainer(
@@ -125,6 +138,7 @@ fun PortraitEmployeeDetailsScreen(
     ) { paddingValues ->
         EmployeeDetailsContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
+            pagingData = pagingData,
             uiState = uiState
         )
     }
@@ -176,7 +190,8 @@ fun EmployeeDetailsContainer(
 @Composable
 fun EmployeeDetailsContent(
     modifier: Modifier = Modifier,
-    uiState: EmployeeDetailsViewModel.State,
+    pagingData: LazyPagingItems<MovieReviewModel>,
+    uiState: MovieDetailsViewModel.State,
 ) {
     when {
         uiState.isLoading -> {
@@ -190,37 +205,95 @@ fun EmployeeDetailsContent(
         else -> {
             val model = uiState.movie
             Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize()
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(model?.posterPath),
-                    contentDescription = model?.title.orEmpty(),
-                    modifier = Modifier.size(50.dp, 50.dp),
-                    contentScale = ContentScale.Fit,
-                    alignment = Alignment.Center
-                )
-                Text(
-                    text = model?.title.orEmpty(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorResource(id = R.color.black),
+                LazyColumn(
                     modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 10.dp)
-                )
-                Text(
-                    text = "${model?.popularity} popularity",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorResource(id = R.color.black),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 10.dp)
-                )
-            }
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp)
 
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model?.backdropPath),
+                                contentDescription = model?.title.orEmpty(),
+                                modifier = Modifier
+                                    .height(300.dp)
+                                    .fillMaxWidth(),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(
+                                text = model?.title.orEmpty(),
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colorResource(id = R.color.black),
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .padding(top = 8.dp)
+                            )
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = 8.dp
+                                ),
+                                text = "Overview",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colorResource(id = R.color.black)
+                            )
+                            Text(
+                                text = model?.overview.orEmpty(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = colorResource(id = R.color.black),
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .padding(top = 10.dp)
+                            )
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = 16.dp
+                                ),
+                                text = "Reviews",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colorResource(id = R.color.black)
+                            )
+                        }
+                    }
+
+                    items(pagingData.itemCount) { index ->
+                        pagingData[index]?.let {
+                            MovieReviewItemView(
+                                model = it
+                            )
+                        }
+                    }
+                }
+                pagingData.apply {
+                    when {
+                        loadState.refresh is LoadState.Loading -> { // Initial load
+                            LoadingListItemView()
+                        }
+
+                        loadState.append is LoadState.Loading -> { // Load more
+                            LoadingListItemView()
+                        }
+
+                        loadState.refresh is LoadState.Error -> { // Error on initial load
+                            // Retry button
+                        }
+
+                        loadState.append is LoadState.Error -> { // Error on load more
+                            // Show Retry
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

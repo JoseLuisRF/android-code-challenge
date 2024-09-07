@@ -15,17 +15,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.jlrf.mobile.employeepedia.R
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.util.extensions.getYearFromDateString
 
 
 @Preview
 @Composable
 fun EmployeeItemPreview() {
-    EmployeeItemView(
+    MovieItemView(
         model = MovieModel(
             genreIds = emptyList(),
             id = 1,
@@ -34,15 +37,16 @@ fun EmployeeItemPreview() {
             overview = "Overview",
             popularity = 1.0,
             posterPath = "posterPath",
-            releaseDate = "releaseDate",
+            releaseDate = "2024-07-02",
             title = "Title",
+            backdropPath = "backdropPath",
         ),
         onClick = {}
     )
 }
 
 @Composable
-fun EmployeeItemView(
+fun MovieItemView(
     model: MovieModel,
     onClick: (MovieModel) -> Unit
 ) {
@@ -50,7 +54,7 @@ fun EmployeeItemView(
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 8.dp, start = 16.dp, end = 16.dp, top = 8.dp)
             .clickable {
                 onClick.invoke(model)
             }
@@ -60,30 +64,29 @@ fun EmployeeItemView(
                 .height(300.dp)
                 .width(200.dp)
         ) {
-            if (model.posterPath.isNotBlank()) {
-                Image(
-                    painter = rememberAsyncImagePainter(model.posterPath),
-                    contentDescription = "",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .height(250.dp)
-                        .fillMaxWidth()
-                        .padding(10.dp)
-
+            Image(
+                painter = rememberAsyncImagePainter(model.posterPath),
+                contentDescription = "",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(250.dp)
+                    .fillMaxWidth()
+            )
+            Column(
+                modifier = Modifier
+                    .padding(
+                        start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp
+                    )
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    text = model.releaseDate.getYearFromDateString().orEmpty(),
+                    color = colorResource(id = R.color.black),
                 )
-            } else {
-                // Display placeholder
             }
-
-            Text(
-                text = model.title,
-                color = colorResource(id = R.color.black),
-            )
-
-            Text(
-                text = model.releaseDate,
-                color = colorResource(id = R.color.black),
-            )
         }
     }
 }

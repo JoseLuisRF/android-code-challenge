@@ -26,14 +26,14 @@ import com.jlrf.mobile.employeepedia.presentation.compose.CustomTheme
 import com.jlrf.mobile.employeepedia.presentation.compose.navigation.CustomAppNavigation
 import com.jlrf.mobile.employeepedia.presentation.compose.screens.HomeScreen
 import com.jlrf.mobile.employeepedia.presentation.compose.screens.MovieDetailsScreen
-import com.jlrf.mobile.employeepedia.presentation.viewmodels.EmployeesListViewModel
+import com.jlrf.mobile.employeepedia.presentation.viewmodels.MoviesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<EmployeesListViewModel>()
+    private val viewModel by viewModels<MoviesViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                         composable(CustomAppNavigation.MovieDetailsScreen.route) {
                             MovieDetailsScreen(
                                 windowSize = windowSizeClass,
-                                model = uiState.selectedMovie!!,
+                                mainUiState = uiState,
                                 onBackPressed = {
                                     navController.popBackStack()
                                 }
