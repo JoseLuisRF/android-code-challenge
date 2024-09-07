@@ -47,6 +47,8 @@ abstract class BaseViewModel<S : BaseState, A : BaseAction>(
         }
     }
 
+    abstract fun isLoading(value: Boolean)
+
     fun dispatch(action: A) {
         viewModelScope.launch(dispatcherProvider.io()) {
             actions.send(action)
