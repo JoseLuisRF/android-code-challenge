@@ -5,7 +5,7 @@
 
 This Android code challenge project showcases the implementation of a movie details screen using modern Android development practices. It serves as a learning resource, demonstrating the use of popular libraries and architectural patterns.
 
-###Key Libraries and Technologies:
+### Key Libraries and Technologies:
 
 * **Jetpack Compose:** UI toolkit for building declarative UIs in Kotlin.
 * **Hilt:** Dependency injection library for simplified management of dependencies.
