@@ -4,10 +4,13 @@ import com.jlrf.mobile.employeepedia.data.mappers.MovieDataMapper
 import com.jlrf.mobile.employeepedia.data.remote.MovieService
 import com.jlrf.mobile.employeepedia.data.remote.MoviesCloudSource
 import com.jlrf.mobile.employeepedia.data.remote.ServiceSettings
+import com.jlrf.mobile.employeepedia.data.remote.model.GetMovieReviewsResponse
 import com.jlrf.mobile.employeepedia.data.remote.model.GetPopularMoviesRequest
 import com.jlrf.mobile.employeepedia.data.remote.model.GetPopularMoviesResponse
 import com.jlrf.mobile.employeepedia.data.remote.model.MovieDto
+import com.jlrf.mobile.employeepedia.data.remote.model.ReviewResult
 import com.jlrf.mobile.employeepedia.domain.models.MovieModel
+import com.jlrf.mobile.employeepedia.domain.models.MovieReviewModel
 import com.jlrf.mobile.employeepedia.util.DispatcherProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -108,4 +111,53 @@ class MoviesCloudSourceTest {
 
             assert(result == null)
         }
+
+    @Test
+    fun `given a request when getMovieReviews is called then return a list of movie reviews`(): TestResult =
+        runTest {
+            val response: Response<GetMovieReviewsResponse> = mockk()
+            val mockReview: ReviewResult = mockk()
+            val mockMovieReviewModel: MovieReviewModel = mockk()
+            coEvery { service.getMovieReviews(any(), any(), any()) } coAnswers { response }
+            every { response.isSuccessful } returns true
+            every { mapper.convertToModel(any(), any()) } answers { listOf(mockMovieReviewModel) }
+            every { response.body() } returns GetMovieReviewsResponse(
+                id = 1,
+                page = 1,
+                totalPages = 1,
+                totalResults = 1,
+                results = listOf(mockReview)
+            )
+
+            val result = sut.getMovieReviews(
+                movieId = 1,
+                page = 1
+            )
+            verify(exactly = 1) { response.isSuccessful }
+            verify(exactly = 1) { mapper.convertToModel(any(), any()) }
+            coVerify(exactly = 1) { service.getMovieReviews(any(), any(), any()) }
+            verify(exactly = 2) { response.body() }
+
+            assert(result is List<MovieReviewModel>)
+        }
+
+    @Test
+    fun `given an error when getMovieReviews is called then return null`(): TestResult = runTest {
+        val response: Response<GetMovieReviewsResponse> = mockk()
+        val mockMovieReviewModel: MovieReviewModel = mockk()
+        coEvery { service.getMovieReviews(any(), any(), any()) } coAnswers { response }
+        every { response.isSuccessful } returns false
+        every { mapper.convertToModel(any(), any()) } answers { listOf(mockMovieReviewModel) }
+
+        val result = sut.getMovieReviews(
+            movieId = 1,
+            page = 1
+        )
+        verify(exactly = 1) { response.isSuccessful }
+        verify(exactly = 0) { mapper.convertToModel(any(), any()) }
+        coVerify(exactly = 1) { service.getMovieReviews(any(), any(), any()) }
+        verify(exactly = 0) { response.body() }
+
+        assert(result == null)
+    }
 }
