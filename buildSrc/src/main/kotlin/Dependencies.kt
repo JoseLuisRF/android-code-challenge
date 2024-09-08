@@ -153,7 +153,6 @@ object Deps {
 
     fun DependencyHandlerScope.junit5() {
         junit5Only()
-        add("testImplementation", junitVintageEngine)
     }
 
     fun DependencyHandlerScope.mockk() {
