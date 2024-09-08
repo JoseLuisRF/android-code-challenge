@@ -1,5 +1,6 @@
 import Deps.hiltModule
 import Deps.junit5
+import Deps.mockk
 import java.util.Properties
 
 plugins {
@@ -62,6 +63,14 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform() // Ensure unit tests use JUnit Platform
+
+            // (Optional) Set JVM arguments for unit tests
+            it.jvmArgs("-XX:+HeapDumpOnOutOfMemoryError", "-Xmx2048m") // Example JVM arguments
+        }
+    }
 }
 
 // Allow references to generated code
@@ -111,4 +120,8 @@ dependencies {
     androidTestImplementation(Compose.uiTests)
     debugImplementation(Compose.uiTooling)
     debugImplementation(Compose.uiTestsManifest)
+
+    // unit test
+    testImplementation(Deps.coroutinesTest)
+    mockk()
 }
