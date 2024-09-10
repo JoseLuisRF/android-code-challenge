@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(CustomAppNavigation.HomeScreen.route) {
                             HomeScreen(
-                                windowSize = windowSizeClass,
+                                windowSize = windowSizeClass.widthSizeClass,
                                 uiState = uiState,
                                 pagingData = pagingData,
                                 onItemClick = {
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
 
                         composable(CustomAppNavigation.MovieDetailsScreen.route) {
                             MovieDetailsScreen(
-                                windowSize = windowSizeClass,
+                                widthSizeClass = windowSizeClass.widthSizeClass,
                                 mainUiState = uiState,
                                 onBackPressed = {
                                     navController.popBackStack()
