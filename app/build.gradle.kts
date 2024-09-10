@@ -33,7 +33,7 @@ android {
         versionCode = Versions.versionCode
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.jlrf.mobile.employeepedia.CustomTestRunner"
 
         buildConfigField("String", "TMDB_TOKEN", "\"$tmdbToken\"")
     }
@@ -71,6 +71,13 @@ android {
             it.jvmArgs("-XX:+HeapDumpOnOutOfMemoryError", "-Xmx2048m") // Example JVM arguments
         }
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 // Allow references to generated code
@@ -102,6 +109,10 @@ dependencies {
 
     // DI
     hiltModule()
+    // For instrumented tests.
+    androidTestImplementation(Deps.hiltAndroidTesting)
+    // ...with Kotlin.
+    kaptAndroidTest(Deps.daggerHiltAndroidProcessor)
 
     // Other
     implementation(Deps.retrofit)
@@ -114,10 +125,18 @@ dependencies {
     // Testing
     junit5()
 
-    androidTestImplementation(AndroidX.testExt)
     androidTestImplementation(Deps.espressoCore)
-    androidTestImplementation(platform(Compose.composeBom))
+    androidTestImplementation(AndroidX.testCore)
+    androidTestImplementation(AndroidX.testCoreKtx)
+    androidTestImplementation(AndroidX.testRunner)
+    androidTestImplementation(AndroidX.testRules)
+    androidTestImplementation(AndroidX.coreKtx)
+
     androidTestImplementation(Compose.uiTests)
+    androidTestImplementation(AndroidX.testExt)
+    androidTestImplementation(platform(Compose.composeBom))
+
+
     debugImplementation(Compose.uiTooling)
     debugImplementation(Compose.uiTestsManifest)
 

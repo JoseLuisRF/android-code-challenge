@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -83,7 +82,7 @@ fun PortraitEmployeeDetailsScreenPreview() {
 
 @Composable
 fun MovieDetailsScreen(
-    windowSize: WindowSizeClass,
+    widthSizeClass: WindowWidthSizeClass,
     mainUiState: MoviesViewModel.State,
     onBackPressed: () -> Unit,
 ) {
@@ -112,7 +111,7 @@ fun MovieDetailsScreen(
 
     val uiState by viewModel.state.collectAsState()
 
-    when (windowSize.widthSizeClass) {
+    when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             PortraitEmployeeDetailsScreen(
                 uiState = uiState,

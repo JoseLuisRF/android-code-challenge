@@ -18,7 +18,12 @@ object AndroidX {
         const val datastore = "1.0.0"
         const val worker = "2.7.1"
         const val paging = "3.3.1"
+        const val androidXTest = "1.6.1"
     }
+    const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
+    const val testRules = "androidx.test:rules:${Versions.androidXTest}"
+    const val testCore = "androidx.test:core:${Versions.androidXTest}"
+    const val testCoreKtx = "androidx.test:core-ktx:${Versions.androidXTest}"
 
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val datastore = "androidx.datastore:datastore-preferences:${Versions.datastore}"
@@ -117,6 +122,7 @@ object Deps {
         "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigationCompose}"
     const val daggerHiltWorker = "androidx.hilt:hilt-work:${Versions.hiltWorker}"
     const val daggerHiltCompiler = "androidx.hilt:hilt-compiler:${Versions.hiltWorker}"
+    const val hiltAndroidTesting = "com.google.dagger:hilt-android-testing:${Versions.hilt}"
 
     /* JUnit */
     const val jupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"

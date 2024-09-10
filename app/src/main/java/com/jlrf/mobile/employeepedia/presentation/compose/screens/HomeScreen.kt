@@ -12,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -69,12 +68,12 @@ fun ErrorStatePreview() {
 
 @Composable
 fun HomeScreen(
-    windowSize: WindowSizeClass,
+    windowSize: WindowWidthSizeClass,
     uiState: MoviesViewModel.State,
     pagingData: LazyPagingItems<MovieModel>,
     onItemClick: (MovieModel) -> Unit = {}
 ) {
-    when (windowSize.widthSizeClass) {
+    when (windowSize) {
         WindowWidthSizeClass.Compact -> {
             PortraitHomeScreen(
                 uiState = uiState,

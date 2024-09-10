@@ -66,7 +66,7 @@ fun MovieItemView(
         ) {
             Image(
                 painter = rememberAsyncImagePainter(model.posterPath),
-                contentDescription = "",
+                contentDescription = model.title,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .height(250.dp)

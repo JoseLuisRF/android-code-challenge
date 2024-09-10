@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">The Movies DB</string>
+    <string name="employees_fragment_label">Movies</string>
+    <string name="employees_details_fragment_label">Movie Details</string>
+</resources>
