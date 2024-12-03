@@ -1,5 +1,7 @@
 name: Commit
-on: push
+on:
+  workflow_call:
+  push:
 jobs:
   commit_lint:
     name: Commit Lint
