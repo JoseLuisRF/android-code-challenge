@@ -2,4 +2,4 @@ name: Test
 on: workflow_dispatch
 jobs:
   call-workflow-passing-data:
-    uses: JoseLuisRF/android-code-challenge/.github/workflows/OnPush.yml@main
+    uses: JoseLuisRF/android-code-challenge/.github/workflows/OnPush.yml@e4e90e4f19757bb495cae97cf8342ebd1ec18c41
