@@ -56,12 +56,12 @@ object Compose {
     object Versions {
         const val composeBom = "2024.06.00"
         const val constraintLayout = "1.0.1"
-        const val compose = "2.7.6"
+        const val navigationCompose = "2.7.6"
         const val material3 = "1.2.1"
-        const val composeTools = "1.6.8"
+        const val composeTools = "1.7.2"
     }
 
-    const val composeNavigation = "androidx.navigation:navigation-compose:${Versions.compose}"
+    const val composeNavigation = "androidx.navigation:navigation-compose:${Versions.navigationCompose}"
     const val composeBom = "androidx.compose:compose-bom:${Versions.composeBom}"
     const val composeUI = "androidx.compose.ui:ui:${Versions.composeTools}"
     const val composeConstraintLayout =
